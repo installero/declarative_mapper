@@ -1,0 +1,31 @@
+mapping:
+  name: (accountname,firstname,lastname)
+  branch_name: (Branch Name)
+  external_id: accountnum
+  account_number: accountnum
+  active: (status)
+  first_name: firstname
+  last_name:
+  billing_street: accountaddress
+  billing_city: city
+  billing_state: state
+  billing_zip: postalcode
+  billing_phone_kind: (phonetype)
+  billing_phone: phone_number_normalize(phonenumber)
+  invoice_email: emailaddress
+  site: webaddress
+  billing_attention: attentionline
+  customer_type: (propertytypename)
+  billing_term_id: (termname)
+  billing_country: country_us()
+  address_attributes:
+    country: country_us()
+    street: accountaddress
+    phone_kind: (phonetype)
+    phone_attributes:
+      code: (phonetype)
+  contacts_attributes:
+    - title: accountname
+      email: emailaddress
+    - title: Branch Name
+      email:
