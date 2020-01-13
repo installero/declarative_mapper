@@ -10,7 +10,6 @@ mapping:
   billing_city: city
   billing_state: state
   billing_zip: postalcode
-  billing_phone_kind: (phonetype)
   billing_phone: phone_number_normalize(phonenumber)
   invoice_email: emailaddress
   site: webaddress

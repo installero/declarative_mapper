@@ -24,6 +24,16 @@ class DeclarativeMapper
     end
   end
 
+  def self.required_csv_fields(mapping_hash)
+    deep_inject(mapping_hash, []) do |value, sum|
+      if needs_method?(value)
+        sum += (parse_signature(value)[:arguments])
+      else
+        sum.push(value)
+      end
+    end.uniq.compact
+  end
+
   def self.argument_values(argument_names, csv_row)
     argument_names.map { |name| csv_row[name] }
   end
@@ -66,7 +76,18 @@ class DeclarativeMapper
     when Array
       object.map { |e| deep_transform_values_with_path(e, path, &block) }
     else
-      yield(object, path) unless object.is_a?(Hash)
+      yield(object, path)
+    end
+  end
+
+  def self.deep_inject(object, acc, &block)
+    case object
+    when Hash
+      object.inject(acc) { |a, (k, v)| deep_inject(v, a, &block) }
+    when Array
+      object.inject(acc) { |a, e| deep_inject(e, a, &block) }
+    else
+      yield(object, acc)
     end
   end
 end

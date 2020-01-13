@@ -4,25 +4,25 @@ require 'yaml'
 require 'declarative_mapper'
 
 describe DeclarativeMapper do
-  describe '.parse' do
-    before do
-      client_mapper_methods_dir_path = "#{__dir__}/fixtures/reliable"
+  before do
+    client_mapper_methods_dir_path = "#{__dir__}/fixtures/reliable"
 
-      Dir["#{client_mapper_methods_dir_path}/**/*.rb"].each { |file| require file }
-    end
+    Dir["#{client_mapper_methods_dir_path}/**/*.rb"].each { |file| require file }
+  end
 
-    let(:yml_content) do
-      yml_path = "#{__dir__}/fixtures/reliable/customers.yml"
+  let(:yml_content) do
+    yml_path = "#{__dir__}/fixtures/reliable/customers.yml"
 
-      YAML.load_file(yml_path).deep_symbolize_keys[:mapping]
-    end
+    YAML.load_file(yml_path).deep_symbolize_keys[:mapping]
+  end
 
-    let(:csv_table) do
-      csv_path = "#{__dir__}/fixtures/reliable/accounts.csv"
+  let(:csv_table) do
+    csv_path = "#{__dir__}/fixtures/reliable/accounts.csv"
 
-      CSV.parse(File.read(csv_path), headers: true)
-    end
+    CSV.parse(File.read(csv_path), headers: true)
+  end
 
+  describe '.convert' do
     let(:first_csv_row) { csv_table.first }
     let(:fourth_csv_row) { csv_table[3] }
 
@@ -86,6 +86,24 @@ describe DeclarativeMapper do
 
     it 'supports attributes arrays' do
       expect(result1[:contacts_attributes].first[:title]).to eq '        FUNDANCE GROUP OF MONTANA LLC'
+    end
+  end
+
+  describe '.required_csv_fields' do
+    let(:csv_field_names) {
+      DeclarativeMapper.required_csv_fields(yml_content)
+    }
+
+    it 'returns csv field names mentioned in hash' do
+      expect(csv_field_names).to include('accountname')
+    end
+
+    it 'returns csv field name require for nested hash' do
+      expect(csv_field_names).to include('phonetype')
+    end
+
+    it 'returns csv field name require for nested array' do
+      expect(csv_field_names).to include('Branch Name')
     end
   end
 end
